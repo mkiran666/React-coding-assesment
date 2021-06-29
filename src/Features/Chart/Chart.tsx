@@ -39,7 +39,9 @@ const CustomTooltip = ({ active, payload }: any) => {
           {payload.map((item: any) => {
             return (
               <div key={item.name}>
-
+                <p>
+                  {convertCamelCase(item.name)}: {item.payload.value} {item.payload.unit}
+                </p>
               </div>
             );
           })}
@@ -54,11 +56,13 @@ const CustomTooltip = ({ active, payload }: any) => {
 const CustomizedTick = (props: any) => {
   const { x, y, payload } = props;
 
-  return (
-    <g transform={`translate(${x},${y})`}>
-
-    </g>
-  );
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={0} y={0} dy={16} textAnchor="middle" fill="#666" transform="">
+          {convertToTime(payload.value)}
+        </text>
+      </g>
+    );
 }
 
 const chartColors = ['#E74C3C', '#566573', '#3498DB', '#58D68D', '#F4D03F', '#C39BD3'];
@@ -80,10 +84,13 @@ const Chart = ({ data }: ChartProps) => {
           bottom: 20,
         }}
       >
-        <CartesianGrid strokeDasharray="5 5" />
-        <XAxis dataKey="at" type="number" tickCount={7} domain={['dataMin', 'dataMax']} allowDuplicatedCategory={false} tick={<CustomizedTick />} />
+        <CartesianGrid strokeDasharray="5 5"/>
+        <XAxis dataKey="at" type="number" tickCount={7} domain={['dataMin', 'dataMax']}  allowDuplicatedCategory={false} tick={<CustomizedTick />} />
 
-
+        {metrics.includes('injValveOpen') ? <YAxis yAxisId="percent" label={{ value: '%', position: 'insideLeft' }} dataKey="value" /> : null}
+        {metrics.includes('tubingPressure') || metrics.includes('casingPressure') ? (
+          <YAxis yAxisId="psi" label={{ value: 'PSI', id: 'psi-label', position: 'insideLeft' }} dataKey="value" />
+        ) : null}
         {metrics.includes('oilTemp') || metrics.includes('waterTemp') || metrics.includes('flareTemp') ? (
           <YAxis yAxisId="F" label={{ value: '°F', position: 'insideLeft' }} dataKey="value" />
         ) : null}
@@ -110,6 +117,19 @@ const Chart = ({ data }: ChartProps) => {
               <Line
                 isAnimationActive={false}
                 yAxisId="psi"
+                dataKey="value"
+                data={d.data}
+                name={d.name}
+                key={d.name}
+                dot={false}
+                stroke={chartColors[index]}
+              />
+            );
+          } else if (d.name === 'injValveOpen') {
+            return (
+              <Line
+                isAnimationActive={false}
+                yAxisId="percent"
                 dataKey="value"
                 data={d.data}
                 name={d.name}
