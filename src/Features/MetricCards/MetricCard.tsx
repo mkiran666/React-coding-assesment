@@ -59,7 +59,9 @@ export default function MetricCard({ title }: CardProps) {
   const oneMinInterval = 30 * 60 * 1000;
 
   const input = {
-
+    metricName: String(title),
+    before: subscriptionStart,
+    after: subscriptionStart - oneMinInterval,
   };
 
   const [result] = useQuery({
@@ -83,11 +85,19 @@ export default function MetricCard({ title }: CardProps) {
       return;
     }
 
+    // This section determines where the historical data is stored in redux after a request is made by the user.   
+    // Switch statment did not work, caused data to be overidden as more charts were added.  
     if (title === 'oilTemp') {
       dispatch(actions.oilChartDataReceived(data.getMeasurements));
     }
 
+    if (title === 'waterTemp') {
+      dispatch(actions.waterChartDataReceived(data.getMeasurements));
+    }
 
+    if (title === 'flareTemp') {
+      dispatch(actions.flareChartDataReceived(data.getMeasurements));
+    }
 
     if (title === 'injValveOpen') {
       dispatch(actions.injValveChartDataReceived(data.getMeasurements));
@@ -99,7 +109,7 @@ export default function MetricCard({ title }: CardProps) {
 
     if (title === 'casingPressure') {
       dispatch(actions.casingPressureChartDataReceived(data.getMeasurements));
-    }
+    } 
   }, [data, error, title, dispatch]);
 
   if (fetching) return <LinearProgress />;
@@ -107,21 +117,21 @@ export default function MetricCard({ title }: CardProps) {
   return (
     <div className="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
       <Card>
-        <CardContent>
-          <Typography variant="h5" component="h2" className={classes.cardTitle}>
-            {convertCamelCase(title)}
-          </Typography>
-          <Typography variant="body2" component="p">
-            {title === 'oilTemp' && `${currentOilData.value} F`}
-            {title === 'waterTemp' && `${currentWaterTemp.value} F`}
-            {title === 'flareTemp' && `${currentFlareTemp.value} F`}
-            {title === 'injValveOpen' && `${currentInjValve.value} %`}
-            {title === 'tubingPressure' && `${currentTubingPresssure.value} PSI`}
-            {title === 'casingPressure' && `${currentCasingPressure.value} PSI`}
-          </Typography>
-        </CardContent>
-      </Card>
+      <CardContent>
+        <Typography variant="h5" component="h2" className={classes.cardTitle}>
+          {convertCamelCase(title)}
+        </Typography>
+        <Typography variant="body2" component="p">
+          {title === 'oilTemp' && `${currentOilData.value} F`}
+          {title === 'waterTemp' && `${currentWaterTemp.value} F`}
+          {title === 'flareTemp' &&`${currentFlareTemp.value} F` }
+          {title === 'injValveOpen' && `${currentInjValve.value} %`}
+          {title === 'tubingPressure' && `${currentTubingPresssure.value} PSI`}
+          {title === 'casingPressure' && `${currentCasingPressure.value} PSI`}
+        </Typography>
+      </CardContent>
+    </Card>
     </div>
-
+    
   );
 }

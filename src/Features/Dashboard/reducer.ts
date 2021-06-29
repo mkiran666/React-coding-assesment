@@ -16,7 +16,10 @@ const slice = createSlice({
   name: 'startTime',
   initialState,
   reducers: {
-
+    subscriptionStartTime: (state, action: PayloadAction<subscriptionStart>) => {
+      const subscriptionStart = action.payload;
+      state.subscriptionStart= subscriptionStart as any;
+    },
     metricsApiErrorReceived: (state, action: PayloadAction<ApiErrorAction>) => state,
   },
 });

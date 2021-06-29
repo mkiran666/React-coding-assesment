@@ -28,6 +28,13 @@ export type TubbingData = {
   tubingPressure: any;
 };
 
+export type CasingData = {
+  casingPressure: any;
+};
+
+export type ApiErrorAction = {
+  error: string;
+};
 
 const initialState = {
   oilHistoryRequested: false,
